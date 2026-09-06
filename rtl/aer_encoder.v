@@ -1,72 +1,3 @@
-/*module aer_encoder #(
-    parameter integer IN = 784
-)(
-    input  wire                     clk,
-    input  wire                     reset_n,
-    input  wire                     start,        // Pulse high when a new 784-bit image arrives，load it
-    input  wire [IN-1:0]            dense_spikes, // The raw 784-bit vector of 1s and 0s
-    input  wire                     next_index,   // Pop signal from the controller
-
-    output reg  [$clog2(IN)-1:0]    active_count, // tells the controller the total number of spikes
-    output wire [$clog2(IN)-1:0]    active_index, // gives the location of the next spike address, encoder gives it to the controller
-    output reg                      ready         // High when the count is calculated and ready
-);
-
-    reg [IN-1:0] working_spikes; //a temporary copy of the spike vector thate gets destroyed one spike at a time
-    integer i;
-
-    // -------------------------------------------------------------------------
-    // 1. Combinational Popcount Tree (Total Active Spikes)
-    // -------------------------------------------------------------------------
-    reg [$clog2(IN):0] count_comb;
-    always @(*) begin
-        count_comb = 0;
-        for (i = 0; i < IN; i = i + 1) begin
-            count_comb = count_comb + dense_spikes[i]; //count how many 1s are in the 784 bit vector
-        end
-    end
-
-    // -------------------------------------------------------------------------
-    // 2. Combinational Priority Encoder (Find lowest index '1')
-    // -------------------------------------------------------------------------
-    reg [$clog2(IN)-1:0] first_idx;
-    reg found;
-    always @(*) begin
-        first_idx = 0;
-        found = 0;
-        for (i = 0; i < IN; i = i + 1) begin
-            if (working_spikes[i] && !found) begin
-                first_idx = i;
-                found = 1'b1;   //want the lowest index active spike
-            end
-        end
-    end
-
-    // Direct wire assignment so the controller reads the index instantly
-    assign active_index = first_idx; //gives it to the controller, now controller sees the first active index
-
-    // -------------------------------------------------------------------------
-    // 3. Sequential Masking Logic
-    // -------------------------------------------------------------------------
-    always @(posedge clk or negedge reset_n) begin
-        if (!reset_n) begin
-            working_spikes <= 0;
-            active_count   <= 0;
-            ready          <= 1'b0;
-        end else if (start) begin
-            // Load the raw spikes and lock in the total count
-            working_spikes <= dense_spikes;
-            active_count   <= count_comb;
-            ready          <= 1'b1;
-        end else if (next_index && found) begin
-            // When the controller pops the current index, clear that bit to 0
-            // so the priority encoder finds the next spike on the next clock cycle.
-            working_spikes[first_idx] <= 1'b0;
-        end
-    end
-
-endmodule*/
-
 module aer_encoder #(
     parameter integer IN = 784
 )(
@@ -104,7 +35,7 @@ module aer_encoder #(
     end
 
     
-    // 2. Hierarchical Priority Encoder (MUST USE working_spikes)
+    // 2. Hierarchical Priority Encoder (MUST use working_spikes)
     reg [24:0] chunk_active; //still divide 784 bits into 25 chunks, check if each chunk has spike or no
     reg [4:0]  active_chunk;
     reg [4:0]  active_bit;
@@ -151,9 +82,7 @@ module aer_encoder #(
     wire [$clog2(IN)-1:0] combinational_index = (active_chunk * 32) + active_bit;
     assign active_index = combinational_index;
 
-    // -------------------------------------------------------------------------
     // 3. Sequential Masking Logic
-    // -------------------------------------------------------------------------
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
             working_spikes <= 0;
