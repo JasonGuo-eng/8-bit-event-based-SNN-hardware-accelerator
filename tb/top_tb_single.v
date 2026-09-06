@@ -1,13 +1,11 @@
 `timescale 1ns/1ps
 
-module top_tb_single;
-
-    // =======================================================
+module top_tb_single;=
     // CONFIGURATION: Select which image index to test
-    // =======================================================
+
     parameter integer IMAGE_TO_TEST      = 0; 
     parameter integer TSTEPS             = 20;
-    parameter integer CLK_PERIOD         = 31; // ~31ns period = 32.2 MHz (Quartus Fmax)[cite: 3]
+    parameter integer CLK_PERIOD         = 31; // ~31ns period = 32.2 MHz
 
     reg clk;
     reg reset_n;
@@ -28,9 +26,7 @@ module top_tb_single;
     integer idx_ptr;
     integer image_idx;
 
-    // =======================================================
     // BENCHMARKING & METRIC VARIABLES[cite: 3]
-    // =======================================================
     time    img_start_time;
     time    img_end_time;
     integer img_cycles;
@@ -46,10 +42,9 @@ module top_tb_single;
         .predicted_class(predicted_class),
         .done(done)
     );
-
-    // =======================================================
+ 
     // POWER ANALYSIS: Generate VCD for Quartus
-    // =======================================================
+
     initial begin
         $dumpfile("power_capture.vcd");
         $dumpvars(0, uut);
@@ -92,9 +87,7 @@ module top_tb_single;
         #(CLK_PERIOD * 2) reset_n = 1;
         #(CLK_PERIOD);
 
-        $display("==================================================");
         $display("STARTING SINGLE INFERENCE FOR IMAGE %0d", IMAGE_TO_TEST);
-        $display("==================================================");
 
         // 1. Record start time
         img_start_time = $time;
@@ -115,9 +108,8 @@ module top_tb_single;
         #(CLK_PERIOD * 10);
 
         // Print final summary metrics
-        $display("==================================================");
+    
         $display("           SINGLE INFERENCE BENCHMARK SUMMARY      ");
-        $display("==================================================");
         $display("Image Index Tested     : %0d", image_idx);
         $display("Actual Label           : %0d", test_labels[image_idx]);
         $display("Predicted Class        : %0d", predicted_class);
@@ -125,10 +117,8 @@ module top_tb_single;
             $display("Prediction Status      : CORRECT");
         else
             $display("Prediction Status      : INCORRECT");
-        $display("--------------------------------------------------");
         $display("Total Clock Cycles     : %0d cycles", img_cycles);
         $display("Latency (@ 32.2MHz)    : %0.2f us", latency_us);
-        $display("==================================================");
         $display("VCD file 'power_capture.vcd' generated successfully.");
 
         $stop;
