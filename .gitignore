@@ -33,5 +33,7 @@ snn_pll.spd
 snn_pll_sim.f
 
 # Large test datasets and memory initialization
-*.mem
-*.npy
+# Block specific large datasets (over 100MB)
+mem_event/event_indices.mem
+mem_event/raw_spikes.mem
+script/test_spikes.npy
