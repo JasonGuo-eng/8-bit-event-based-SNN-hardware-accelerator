@@ -1,0 +1,37 @@
+# Quartus databases and GUI workspaces
+db/
+incremental_db/
+*.qws
+
+# Compilation outputs
+output_files/
+hps_isw_handoff/
+
+# Qsys/Platform Designer generation
+.qsys_edit/
+*.sopcinfo
+
+# Simulation, compiled libraries, and waveforms
+work/
+snn_pll/
+snn_pll_sim/
+*.vcd
+*.wlf
+
+# Generated logs and dumps
+*qmegawiz_errors_log*
+c5_pin_model_dump*
+hps_sdram_p0_all_pins*
+hps_sdram_p0_summary*
+
+# Generated IP wrappers (Quartus regenerates these from the .qip/.sip)
+snn_pll.v
+snn_pll.bsf
+snn_pll.cmp
+snn_pll.ppf
+snn_pll.spd
+snn_pll_sim.f
+
+# Large test datasets and memory initialization
+*.mem
+*.npy
