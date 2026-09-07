@@ -44,7 +44,7 @@ The performance improvements of the event-driven design require a trade-off in r
 * `rtl/`: Core Verilog source files containing the FSM, PEs, IF neuron modules, and BRAM instantiations.
 * `tb/`: Testbenches for ModelSim RTL verification.
 * `script/`: Tcl and automation scripts for simulation and synthesis.
-* `mem/`: Contains mature weights extracted from software. *(Note: Large dataset .mem and .npy files are excluded from this repository).*
+* `mem/`: Contains trained weights extracted from software. *(Note: the input raw_spikes.mem is too large and is excluded from this repository).*
 * `soc_system/`: Platform Designer (Qsys) system definitions.
 * `*.qpf` / `*.qsf`: Main Quartus project and settings files including pin assignments.
 
